@@ -3,6 +3,14 @@
 
 #include "v8wrapper.h"
 
+static void LogCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  if (args.Length() < 1) return;
+  v8::HandleScope scope(args.GetIsolate());
+  v8::Handle<v8::Value> arg = args[0];
+  v8::String::Utf8Value value(arg);
+  printf("%s\n", *value);
+}
+
 using namespace v8;
 
 int runv8(char *jssrc) {
@@ -21,9 +29,18 @@ int runv8(char *jssrc) {
     // Create a stack-allocated handle scope.
     HandleScope handle_scope(isolate);
 
+    // Create a template for the global object and set the
+    // built-in global functions.
+    Local<ObjectTemplate> global = ObjectTemplate::New(isolate);
+
+    // create a console object
+    Local<ObjectTemplate> console = ObjectTemplate::New(isolate);
+    console->Set(String::NewFromUtf8(isolate, "log"), FunctionTemplate::New(isolate, LogCallback));
+
+    global->Set(String::NewFromUtf8(isolate, "console"), console);
     // Each processor gets its own context so different processors
     // do not affect each other.
-    Local<Context> context = Context::New(isolate);
+    Local<Context> context = Context::New(isolate, NULL, global);
 
     // Enter the context for compiling and running the hello world script.
     Context::Scope context_scope(context);

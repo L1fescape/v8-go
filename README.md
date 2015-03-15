@@ -23,4 +23,9 @@ g++ -I. v8wrapper.cpp -std=c++11 -stdlib=libstdc++ -o v8wrapper.so ../v8/v8/out/
 ```
 $ go run v8.go 'var a = new Array("Hello", "World"); a.join(" ");'
 //-> Hello World
+
+$ go run v8.go examples/person.js
+//-> Andrew
+//-> Andrew Kennedy
+//-> undefined
 ```
