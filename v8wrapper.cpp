@@ -53,10 +53,6 @@ int runv8(char *jssrc) {
 
     // Run the script to get the result.
     Local<Value> result = script->Run();
-
-    // Convert the result to an UTF8 string and print it.
-    String::Utf8Value utf8(result);
-    printf("%s\n", *utf8);
   }
 
   // Dispose the isolate and tear down V8.
